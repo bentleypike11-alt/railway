@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:#1e1f22;
+  color:white;
+  display:flex;
+}
+
+.sidebar {
+  width:240px;
+  background:#111214;
+  height:100vh;
+  padding:20px;
+}
+
+.sidebar h2 {
+  color:#b5bac1;
+}
+
+.sidebar a {
+  display:block;
+  padding:10px;
+  color:#b5bac1;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.sidebar a:hover {
+  background:#2b2d31;
+  color:white;
+}
+
+.main {
+  flex:1;
+  padding:30px;
+}
+
+.card {
+  background:#2b2d31;
+  padding:20px;
+  border-radius:10px;
+}
+
+input {
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:#1e1f22;
+  border:1px solid #3f4147;
+  color:white;
+  border-radius:6px;
+}
+
+button {
+  margin-top:10px;
+  padding:10px;
+  width:100%;
+  background:#5865f2;
+  border:none;
+  color:white;
+  border-radius:6px;
+}
+
+.user {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.user img {
+  width:40px;
+  border-radius:50%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h2>⚙️ Settings</h2>
+  <a>General</a>
+  <a>Appearance</a>
+  <a href="/logout" style="color:#f23f42;">Logout</a>
+</div>
+
+<div class="main">
+
+  <div class="user">
+    <img id="avatar">
+    <div id="username">Loading...</div>
+  </div>
+
+  <div class="card">
+    <h3>Profile</h3>
+    <input id="bio" placeholder="Bio">
+    <button onclick="save()">Save</button>
+  </div>
+
+</div>
+
+<script>
+fetch('/api/user')
+.then(r=>r.json())
+.then(data=>{
+  document.getElementById('username').innerText =
+    "✅ " + data.discord.username;
+
+  document.getElementById('avatar').src =
+    `https://cdn.discordapp.com/avatars/${data.discord.id}/${data.discord.avatar}.png`;
+
+  document.getElementById('bio').value =
+    data.settings.bio || '';
+});
+
+function save(){
+  fetch('/api/save', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      bio: document.getElementById('bio').value
+    })
+  }).then(()=>alert("Saved!"));
+}
+</script>
+
+</body>
+</html>
